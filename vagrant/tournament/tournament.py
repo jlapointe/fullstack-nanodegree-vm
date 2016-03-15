@@ -118,9 +118,8 @@ def swissPairings():
 
     standings = playerStandings()
 
-    
+    #Assuming an even number of players, generate a list of tuples from the standings list.
     pairings = [(standings[x][0],standings[x][1],standings[x+1][0],standings[x+1][1]) for x in range(0,len(standings)-1) if x%2==0]
-    #pairings = [standings[x],standings[x+1] for x in standings]
 
     return pairings
 
