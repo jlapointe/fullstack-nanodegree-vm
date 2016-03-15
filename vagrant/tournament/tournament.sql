@@ -7,3 +7,13 @@
 -- these lines here.
 
 
+CREATE TABLE players(
+	id serial primary key,
+	name text
+);
+
+CREATE TABLE matches(
+	id serial primary key,
+	winner integer REFERENCES players(id),
+	loser integer REFERENCES players(id)
+);
