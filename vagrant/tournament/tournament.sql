@@ -26,12 +26,6 @@ CREATE VIEW matches_count AS
 	GROUP BY players.id
 	ORDER BY players.id;
 
-CREATE VIEW results_table AS
-	SELECT matches_count.id, matches_count.count AS m, wins_count.count AS w
-	FROM wins_count
-		JOIN matches_count 
-		ON wins_count.id = matches_count.id;
-
 CREATE VIEW wins_count AS
 	SELECT players.id, count(matches.id) AS count
 		FROM players
@@ -40,4 +34,15 @@ CREATE VIEW wins_count AS
 		GROUP BY players.id
 		ORDER BY players.id;
 
+CREATE VIEW results_table AS
+	SELECT matches_count.id, matches_count.count AS m, wins_count.count AS w
+	FROM wins_count
+		JOIN matches_count 
+		ON wins_count.id = matches_count.id;
+
+CREATE VIEW player_standings AS
+	SELECT players.id, name, w, m 
+	FROM players JOIN results_table 
+		ON players.id=results_table.id 
+		ORDER BY w desc;
 

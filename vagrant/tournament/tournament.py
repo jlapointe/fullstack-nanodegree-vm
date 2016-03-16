@@ -73,7 +73,7 @@ def playerStandings():
 
     """results_table is a view containing the number of matches and wins for each player id"""
 
-    query = "SELECT players.id, name, w, m FROM players JOIN results_table ON players.id=results_table.id ORDER BY w desc;"
+    query = "SELECT id, name, w, m FROM player_standings;"
     db = connect()
     cursor = db.cursor()
     cursor.execute(query)
@@ -91,7 +91,7 @@ def reportMatch(winner, loser):
       loser:  the id number of the player who lost
     """
 
-    query = "INSERT INTO matches(winner,loser) VALUES(%s,%s);" % (winner,loser) #Prevent injection attack
+    query = "INSERT INTO matches(winner,loser) VALUES(%s,%s);" % (winner,loser,) #Prevent injection attack
     db = connect()
     cursor = db.cursor()
     cursor.execute(query)
@@ -115,12 +115,9 @@ def swissPairings():
         id2: the second player's unique id
         name2: the second player's name 
     """
-
     standings = playerStandings()
 
     #Assuming an even number of players, generate a list of tuples from the standings list.
     pairings = [(standings[x][0],standings[x][1],standings[x+1][0],standings[x+1][1]) for x in range(0,len(standings)-1) if x%2==0]
 
     return pairings
-
-
