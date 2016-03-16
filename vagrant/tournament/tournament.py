@@ -52,7 +52,8 @@ def registerPlayer(name):
     """
     db = connect()
     cursor = db.cursor()
-    cursor.execute("INSERT INTO players (name) VALUES (%s)", (name,)) #Prevent injection attack
+    query = "INSERT INTO players (name) VALUES (%s)"
+    cursor.execute(query, (name,)) #Prevent injection attack
     db.commit()
     db.close()
     return
@@ -91,10 +92,10 @@ def reportMatch(winner, loser):
       loser:  the id number of the player who lost
     """
 
-    query = "INSERT INTO matches(winner,loser) VALUES(%s,%s);" % (winner,loser,) #Prevent injection attack
+    query = "INSERT INTO matches(winner,loser) VALUES(%s,%s);" #Prevent injection attack
     db = connect()
     cursor = db.cursor()
-    cursor.execute(query)
+    cursor.execute(query, (winner,loser))
     db.commit()
     db.close()
 
