@@ -17,3 +17,27 @@ CREATE TABLE matches(
 	winner integer REFERENCES players(id),
 	loser integer REFERENCES players(id)
 );
+
+CREATE VIEW matches_count AS 
+	SELECT players.id, count(matches.id) AS count
+	FROM players 
+		LEFT JOIN matches 
+		ON matches.winner = players.id OR matches.loser = players.id 
+	GROUP BY players.id
+	ORDER BY players.id;
+
+CREATE VIEW results_table AS
+	SELECT matches_count.id, matches_count.count AS m, wins_count.count AS w
+	FROM wins_count
+		JOIN matches_count 
+		ON wins_count.id = matches_count.id;
+
+CREATE VIEW wins_count AS
+	SELECT players.id, count(matches.id) AS count
+		FROM players
+			LEFT JOIN matches 
+			ON matches.winner = players.id
+		GROUP BY players.id
+		ORDER BY players.id;
+
+
