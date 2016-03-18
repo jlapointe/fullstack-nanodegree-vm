@@ -4,8 +4,8 @@ fullstack-nanodegree-vm
 Virtual machine for project submission to Udacity's Full Stack Web Developer nanodegree.
 
 ###Requirements to run###
-* [https://www.vagrantup.com/downloads.html](Vagrant)
-* [https://www.virtualbox.org/wiki/Downloads](Virtualbox)
+* [Vagrant](https://www.vagrantup.com/downloads.html)
+* [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
 
 For more detail installing or troubleshooting these requirements, please see [https://www.udacity.com/wiki/ud197/install-vagrant](Udacity's VM Setup Instructions)
 
