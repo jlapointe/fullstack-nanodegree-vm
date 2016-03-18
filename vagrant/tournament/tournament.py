@@ -116,9 +116,16 @@ def swissPairings():
         id2: the second player's unique id
         name2: the second player's name 
     """
-    standings = playerStandings()
+    #standings = playerStandings()
 
     #Assuming an even number of players, generate a list of tuples from the standings list.
-    pairings = [(standings[x][0],standings[x][1],standings[x+1][0],standings[x+1][1]) for x in range(0,len(standings)-1) if x%2==0]
+    #pairings = [(standings[x][0],standings[x][1],standings[x+1][0],standings[x+1][1]) for x in range(0,len(standings)-1) if x%2==0]
 
-    return pairings
+    db = connect()
+    cursor = db.cursor()
+    query = "SELECT id1, name1, id2, name2 FROM swiss_pairings";
+    cursor.execute(query)
+    result = cursor.fetchall() #Return the value of the count, not the list that stores it
+    db.close()
+
+    return result
