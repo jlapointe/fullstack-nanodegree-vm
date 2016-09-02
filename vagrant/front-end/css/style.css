@@ -1,0 +1,48 @@
+@import "https://fonts.googleapis.com/css?family=Baloo+Bhaina|Nunito";
+
+@media screen and (max-width: 360px) {
+	h1 {
+		font-size: 1.9em;
+	}
+}
+
+h1 {
+	font-family: "Baloo Bhaina", cursive;
+}
+
+h2,h3,h4,h5,h6 {
+	font-family: "Nunito", sans-serif;
+}
+
+img {
+	width: 100%;
+	padding: 0;
+	margin: 0;
+}
+
+header {
+	max-height: 100px;
+}
+
+footer>p {
+	font-size: 1.3em;
+}
+
+#logo {
+	float: right;
+	padding: 0;
+	margin: 0;
+	width: 100px;
+	height: 100px;
+}
+
+#banner {
+  background-image: url("../img/banner.jpg");
+  background-size: cover;
+}
+
+#project1 {
+  background-image: url("../img/project1.jpg");
+  
+	background-size: auto;
+}
