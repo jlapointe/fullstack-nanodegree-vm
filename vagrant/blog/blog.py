@@ -179,11 +179,17 @@ class LoginHandler(Handler):
         
         self.render_login_form(username=username, error=error)
 
+class LogoutHandler(Handler):
+    def get(self):
+        self.response.headers.add_header('Set-Cookie', 'user_id=')
+        self.redirect(r'/signup')
+        
 app = webapp2.WSGIApplication([
     (r'/', FrontPageHandler),
     (r'/newpost', NewPostHandler),
     (r'/signup', SignupHandler),
     (r'/login', LoginHandler),
+    (r'/logout', LogoutHandler),
     (r'/blog', BlogHandler),
     (r'/blog/(\d+)', BlogPostHandler)
 ], debug=True)
