@@ -11,7 +11,9 @@ jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir), a
 
 # Stuff for hashed cookies
 
-SECRET = "sekrit"   #not a secure way to store this! for tutorial only.
+#Salt
+SECRET = "sekrit"   #TODO: not a secure way to store this! move to new file
+
 def hash_str(s):
     return hmac.new(SECRET, s).hexdigest()
 
@@ -66,7 +68,9 @@ class FrontPageHandler(Handler):
                 username = u.username
                 message = "Welcome, %s!" % username
             else:
+                #Bad cookie
                 self.redirect(r'/signup')
+                return
         else:
             message = "Welcome!"
         
@@ -102,14 +106,14 @@ class NewPostHandler(Handler):
             error = "one or more empty fields"
             self.render_newpost_form(subject, content, error)
 
-#HTTP handler(s) for accessing a specific blog entry
+#HTTP handler(s) for accessing a specific blog post
 class BlogPostHandler(Handler):
-    def render_blog_post(self, entry_id):
-        blog_post = BlogPost.get_by_id(entry_id)
+    def render_blog_post(self, post_id):
+        blog_post = BlogPost.get_by_id(post_id)
         self.render('blog_post.htm', blog_post=blog_post)
         
-    def get(self, entry_id):
-        self.render_blog_post(int(entry_id))  
+    def get(self, post_id):
+        self.render_blog_post(int(post_id))  
 
 #HTTP handlers for registering a new user
 class SignupHandler(Handler):
@@ -120,23 +124,31 @@ class SignupHandler(Handler):
         self.render_signup_form(username=username, email=email, error=error) 
         
     def post(self):    #TODO: form validation
+        #Get user values from input form
         username = self.request.get('username')
         password = self.request.get('password')
         verify = self.request.get('verify')
         email = self.request.get('email')
         
+        #Get list of usernames from database
+        q = db.GqlQuery("SELECT username FROM User")
+        user_list = [u.username for u in q]
+        
         if username and password and verify:
             if password == verify:
-                #Store user in database
-                u = User(username=username, password=password, email=email)
-                u.put()
-                u_id=u.key().id()
-                
-                #Create and store cookie for user id
-                uid_cookie_val = make_secure_val(str(u_id))
-                self.response.headers.add_header('Set-Cookie', 'user_id=%s; Path=/' % uid_cookie_val)
-                self.redirect(r'/')
-                return
+                if username not in user_list:
+                    #Store user in database
+                    u = User(username=username, password=password, email=email)
+                    u.put()
+                    u_id=u.key().id()
+                    
+                    #Create and store cookie for user id
+                    uid_cookie_val = make_secure_val(str(u_id))
+                    self.response.headers.add_header('Set-Cookie', 'user_id=%s; Path=/' % uid_cookie_val)
+                    self.redirect(r'/')
+                    return
+                else:
+                    error = "username already exists"
             else:
                 error = "password fields didn't match"
         else:
@@ -149,6 +161,7 @@ app = webapp2.WSGIApplication([
     (r'/', FrontPageHandler),
     (r'/newpost', NewPostHandler),
     (r'/signup', SignupHandler),
+    (r'/login', SignupHandler),
     (r'/blog', BlogHandler),
     (r'/blog/(\d+)', BlogPostHandler)
 ], debug=True)
