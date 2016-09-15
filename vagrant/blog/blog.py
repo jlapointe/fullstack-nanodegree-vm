@@ -140,12 +140,8 @@ class SignupHandler(Handler):
                     #Store user in database
                     u = User(username=username, password=password, email=email)
                     u.put()
-                    u_id=u.key().id()
                     
-                    #Create and store cookie for user id
-                    uid_cookie_val = make_secure_val(str(u_id))
-                    self.response.headers.add_header('Set-Cookie', 'user_id=%s; Path=/' % uid_cookie_val)
-                    self.redirect(r'/')
+                    self.redirect(r'/login')
                     return
                 else:
                     error = "username already exists"
@@ -156,12 +152,38 @@ class SignupHandler(Handler):
         
         self.render_signup_form(username=username, email=email, error=error)
                 
+class LoginHandler(Handler):
+    def render_login_form(self, username='', error=""):
+        self.render('login_form.htm', username=username, error=error)
+        
+    def get(self, username='', error=""):
+        self.render_login_form(username='', error="")
+    
+    def post(self, username='', password=''):
+        username = self.request.get('username')
+        password = self.request.get('password')
+        
+        if username and password:
+            q = db.GqlQuery("SELECT username, password FROM User")
+            for user in q.run():
+                if username == user.username and password == user.password:        
+                    #Create and store cookie for user id
+                    u_id = user.key().id()
+                    uid_cookie_val = make_secure_val(str(u_id))
+                    self.response.headers.add_header('Set-Cookie', 'user_id=%s; Path=/' % uid_cookie_val)
+                    self.redirect(r'/')
+                    return
+            error = "nope!"
+        else:
+            error = "please complete all required fields"
+        
+        self.render_login_form(username=username, error=error)
 
 app = webapp2.WSGIApplication([
     (r'/', FrontPageHandler),
     (r'/newpost', NewPostHandler),
     (r'/signup', SignupHandler),
-    (r'/login', SignupHandler),
+    (r'/login', LoginHandler),
     (r'/blog', BlogHandler),
     (r'/blog/(\d+)', BlogPostHandler)
 ], debug=True)
