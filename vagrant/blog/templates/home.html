@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block EntryForm %}
+    <form method="post">
+	    <label>
+		    <div>title</div>
+		    <input type="text" name="subject" value="{{subject}}">
+	    </label>
+	    <label>
+		    <div>body</div>
+		    <textarea name="content">{{content}}</textarea>
+	    </label>
+	    <div class="error">{{error}}</div>
+	    <input type="submit">
+    </form>
+
+    {% if blog_entries %}
+        {% for b in blog_entries %}
+            <hr>
+            <div class="entry">
+                <div class="entry-subject">{{b.subject}}</div>
+                <pre class="entry-content">{{b.content}}</pre>
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endblock %}

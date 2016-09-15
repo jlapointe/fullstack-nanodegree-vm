@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Posts:</h2>
+
+    {% for b in blog_entries %}
+        <hr>
+        <div class="blogpost">
+            <div class="post-subject">{{b.subject}}</div>
+            <pre class="post-content">{{b.content}}</pre>
+        </div>
+    {% endfor %}
+
+{% endblock content %}
