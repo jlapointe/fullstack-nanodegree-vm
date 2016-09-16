@@ -58,8 +58,9 @@ class FrontPageHandler(Handler):
         self.render('front.htm', message=message)
         
     def get(self):
-        uid_cookie_str = self.request.cookies.get('user_id')
+        message = "Welcome!"
         
+        uid_cookie_str = self.request.cookies.get('user_id')
         if uid_cookie_str:
             uid_cookie_val = check_secure_val(uid_cookie_str)
             if uid_cookie_val:
@@ -72,7 +73,7 @@ class FrontPageHandler(Handler):
                 self.redirect(r'/signup')
                 return
         else:
-            message = "Welcome!"
+            self.redirect(r'/signup')
         
         self.render_front_page(message)
 
@@ -181,8 +182,10 @@ class LoginHandler(Handler):
 
 class LogoutHandler(Handler):
     def get(self):
+        self.write("Logged out. Redirecting...")
         self.response.headers.add_header('Set-Cookie', 'user_id=')
         self.redirect(r'/signup')
+        return
         
 app = webapp2.WSGIApplication([
     (r'/', FrontPageHandler),
