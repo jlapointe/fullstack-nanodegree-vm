@@ -9,7 +9,8 @@ from google.appengine.ext import db
 template_dir = os.path.join(os.path.dirname(__file__), 'templates')
 jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir), autoescape = True)
 
-# Stuff for hashed cookies
+#TODO: store pw_hash
+#TODO: write helper functions
 
 #Salt
 SECRET = "sekrit"   #TODO: not a secure way to store this! move to new file
@@ -139,10 +140,13 @@ class SignupHandler(Handler):
             if password == verify:
                 if username not in user_list:
                     #Store user in database
-                    u = User(username=username, password=password, email=email)
-                    u.put()
-                    
-                    self.redirect(r'/login')
+                    user = User(username=username, password=password, email=email)
+                    user.put()
+                    #Create and store cookie for user id
+                    u_id = user.key().id()
+                    uid_cookie_val = make_secure_val(str(u_id))
+                    self.response.headers.add_header('Set-Cookie', 'user_id=%s; Path=/' % uid_cookie_val)
+                    self.redirect(r'/')
                     return
                 else:
                     error = "username already exists"
@@ -174,7 +178,7 @@ class LoginHandler(Handler):
                     self.response.headers.add_header('Set-Cookie', 'user_id=%s; Path=/' % uid_cookie_val)
                     self.redirect(r'/')
                     return
-            error = "nope!"
+                error = "nope!"
         else:
             error = "please complete all required fields"
         
@@ -183,9 +187,9 @@ class LoginHandler(Handler):
 class LogoutHandler(Handler):
     def get(self):
         self.write("Logged out. Redirecting...")
-        self.response.headers.add_header('Set-Cookie', 'user_id=')
+        self.response.headers.add_header('Set-Cookie', r'.+=;\s+Path=/')
         self.redirect(r'/signup')
-        return
+
         
 app = webapp2.WSGIApplication([
     (r'/', FrontPageHandler),
